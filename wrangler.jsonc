@@ -1,0 +1,87 @@
+{
+  // Wrangler configuration for Halftone Waves App
+  "name": "halftone-waves-app",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-12-29",
+  "compatibility_flags": ["nodejs_compat"],
+  
+  // Worker configuration
+  "send_metrics": false,
+  "logpush": false,
+  
+  // Build configuration
+  "build": {
+    "command": "",
+    "cwd": "",
+    "watch_dir": "src"
+  },
+  
+  // Environment variables (if needed)
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  
+  // KV namespaces (uncomment if you want to store emails)
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "EMAIL_STORE",
+  //     "id": "your-kv-namespace-id",
+  //     "preview_id": "your-preview-kv-namespace-id"
+  //   }
+  // ],
+  
+  // D1 databases (uncomment if you want to use D1 for email storage)
+  // "d1_databases": [
+  //   {
+  //     "binding": "DB",
+  //     "database_name": "halftone-waves-db",
+  //     "database_id": "your-database-id"
+  //   }
+  // ],
+  
+  // Routes configuration
+  "routes": [
+    {
+      "pattern": "*halftone-waves.your-domain.com/*",
+      "zone_name": "your-domain.com"
+    }
+  ],
+  
+  // Custom domains (optional)
+  // "route": "halftone-waves.your-domain.com/*",
+  
+  // Development configuration
+  "dev": {
+    "ip": "localhost",
+    "port": 8787,
+    "local_protocol": "http"
+  },
+  
+  // Limits and performance
+  "limits": {
+    "cpu_ms": 50
+  },
+  
+  // Placement (optional - for performance optimization)
+  // "placement": {
+  //   "mode": "smart"
+  // },
+  
+  // Analytics (optional)
+  // "analytics_engine_datasets": [
+  //   {
+  //     "binding": "ANALYTICS",
+  //     "dataset": "halftone_analytics"
+  //   }
+  // ],
+  
+  // Triggers (for scheduled events if needed)
+  // "triggers": {
+  //   "crons": ["0 0 * * *"]
+  // },
+  
+  // Miniflare configuration for local development
+  "miniflare": {
+    "upstream": "https://halftone-waves.your-domain.com"
+  }
+}
