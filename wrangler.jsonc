@@ -1,6 +1,6 @@
 {
   // Wrangler configuration for Halftone Waves App
-  "name": "halftone-waves-app",
+  "name": "comingformnew",
   "main": "src/index.ts",
   "compatibility_date": "2024-12-29",
   "compatibility_flags": ["nodejs_compat"],
