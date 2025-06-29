@@ -228,6 +228,22 @@ export default function Component() {
     }
   }
 
+  // Mobile scroll positioning
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768
+    if (isMobile) {
+      // Scroll to middle between header and text block top
+      const textBlockTop = window.innerHeight * 0.25 // 25vh where text is positioned
+      const headerHeight = 0 // header is at top
+      const scrollPosition = (headerHeight + textBlockTop) / 2
+
+      window.scrollTo({
+        top: scrollPosition,
+        behavior: "smooth",
+      })
+    }
+  }, [])
+
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <canvas ref={canvasRef} className="w-full h-screen bg-black" />
@@ -239,11 +255,8 @@ export default function Component() {
         </div>
       </div>
 
-      {/* Text - Positioned between header and top of logo */}
-      <div
-        className="absolute left-1/2 transform -translate-x-1/2 pointer-events-none"
-        style={{ top: "calc(25vh - 56px)" }}
-      >
+      {/* Text - Positioned between header and logo top */}
+      <div className="absolute top-[25vh] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
         <div
           className="text-center pointer-events-none w-[90vw] sm:w-[720px] max-w-[720px]"
           style={{ opacity: textOpacity }}
