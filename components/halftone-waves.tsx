@@ -240,7 +240,7 @@ export default function Component() {
       </div>
 
       {/* Text - Same width as form, no padding (отступ от блока до текста = 0) */}
-      <div className="absolute top-8 sm:top-12 left-1/2 transform -translate-x-1/2 pointer-events-none">
+      <div className="absolute top-4 sm:top-12 left-1/2 transform -translate-x-1/2 pointer-events-none">
         <div
           className="text-center pointer-events-none w-[90vw] sm:w-[720px] max-w-[720px]"
           style={{ opacity: textOpacity }}
@@ -250,7 +250,7 @@ export default function Component() {
             style={{
               color: "rgba(255, 255, 255, 0.95)",
               fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
-              fontSize: "clamp(1.575rem, 4vw, 2.52rem)", // Увеличено на 5% от text-2xl/3xl/4xl
+              fontSize: "clamp(1.4rem, 4vw, 2.52rem)", // Уменьшено для мобильных
               textShadow:
                 "1px 1px 0 rgba(0, 0, 0, 0.8), -1px -1px 0 rgba(0, 0, 0, 0.8), 1px -1px 0 rgba(0, 0, 0, 0.8), -1px 1px 0 rgba(0, 0, 0, 0.8)", // Обводка
             }}
@@ -262,12 +262,12 @@ export default function Component() {
 
       {/* Form - Exact same width as text block */}
       <div
-        className="absolute bottom-5 sm:bottom-7 left-1/2 transform -translate-x-1/2 pointer-events-auto"
+        className="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 pointer-events-auto"
         style={{ opacity: formOpacity }}
       >
-        <div className="w-[90vw] sm:w-[720px] max-w-[720px] h-[102px] sm:h-[130px] bg-white/10 border border-white/20 rounded backdrop-blur-sm p-2.5 sm:p-3.5 relative">
+        <div className="w-[90vw] sm:w-[720px] max-w-[720px] h-[85px] sm:h-[130px] bg-white/10 border border-white/20 rounded backdrop-blur-sm p-2 sm:p-3.5 relative">
           {/* Email input */}
-          <div className="absolute top-2.5 sm:top-3.5 left-2.5 sm:left-3.5 right-2.5 sm:right-3.5">
+          <div className="absolute top-2 sm:top-3.5 left-2 sm:left-3.5 right-2.5 sm:right-3.5">
             <input
               type="email"
               value={email}
@@ -281,7 +281,7 @@ export default function Component() {
           {/* Submit button with arrow icon - Bottom right corner with proper spacing */}
           <button
             onClick={handleSubmit}
-            className="absolute bottom-2.5 sm:bottom-3.5 right-2.5 sm:right-3.5 bg-violet-600 text-white p-2 sm:p-2.5 rounded font-medium hover:bg-violet-700 transition-colors duration-200 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10"
+            className="absolute bottom-2 sm:bottom-3.5 right-2 sm:right-3.5 bg-violet-600 text-white p-2 sm:p-2.5 rounded font-medium hover:bg-violet-700 transition-colors duration-200 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10"
           >
             <svg
               width="16"
@@ -299,13 +299,13 @@ export default function Component() {
 
           {/* Error message */}
           {emailError && (
-            <div className="absolute top-[42px] sm:top-[51px] left-2.5 sm:left-3.5 text-red-400 text-xs sm:text-sm mt-1">
+            <div className="absolute top-[35px] sm:top-[51px] left-2 sm:left-3.5 text-red-400 text-xs sm:text-sm mt-1">
               {emailError}
             </div>
           )}
 
           {/* Buttons section - Bottom left corner */}
-          <div className="absolute bottom-2.5 sm:bottom-3.5 left-2.5 sm:left-3.5 flex gap-2">
+          <div className="absolute bottom-2 sm:bottom-3.5 left-2 sm:left-3.5 flex gap-2">
             <div className="bg-violet-600 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded text-xs sm:text-sm flex items-center gap-1">
               <svg width="10" height="10" className="sm:w-3 sm:h-3" viewBox="0 0 12 12" fill="currentColor">
                 <path d="M6 1a.5.5 0 0 1 .5.5v4h4a.5.5 0 0 1 0 1h-4v4a.5.5 0 0 1-1 0v-4h-4a.5.5 0 0 1 0-1h4v-4A.5.5 0 0 1 6 1z" />
