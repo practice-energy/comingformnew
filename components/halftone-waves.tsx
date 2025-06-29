@@ -148,55 +148,63 @@ export default function Component() {
 
   useEffect(() => {
     if (isSubmitted) {
-      // Text animation: fade out -> change text -> fade in (3 seconds total)
-      const fadeOutDuration = 1500 // 1.5 seconds fade out
-      const fadeInDuration = 1500 // 1.5 seconds fade in
+      // Reset to initial state before starting animation
+      setTextOpacity(1)
+      setFormOpacity(1)
+      setDisplayText(originalText)
 
-      // Fade out
-      let fadeOutStep = 0
-      const fadeOutSteps = 30
-      const fadeOutTimer = setInterval(() => {
-        const progress = fadeOutStep / fadeOutSteps
-        setTextOpacity(1 - progress)
-        fadeOutStep++
+      // Small delay to ensure reset is visible
+      setTimeout(() => {
+        // Text animation: fade out -> change text -> fade in (2 seconds total)
+        const fadeOutDuration = 1000 // 1 second fade out
+        const fadeInDuration = 1000 // 1 second fade in
 
-        if (fadeOutStep >= fadeOutSteps) {
-          clearInterval(fadeOutTimer)
-          // Change text
-          setDisplayText(newText)
+        // Fade out
+        let fadeOutStep = 0
+        const fadeOutSteps = 20
+        const fadeOutTimer = setInterval(() => {
+          const progress = fadeOutStep / fadeOutSteps
+          setTextOpacity(1 - progress)
+          fadeOutStep++
 
-          // Fade in
-          let fadeInStep = 0
-          const fadeInTimer = setInterval(() => {
-            const progress = fadeInStep / fadeOutSteps
-            setTextOpacity(progress)
-            fadeInStep++
+          if (fadeOutStep >= fadeOutSteps) {
+            clearInterval(fadeOutTimer)
+            // Change text
+            setDisplayText(newText)
 
-            if (fadeInStep >= fadeOutSteps) {
-              clearInterval(fadeInTimer)
-              setTextOpacity(1)
+            // Fade in
+            let fadeInStep = 0
+            const fadeInTimer = setInterval(() => {
+              const progress = fadeInStep / fadeOutSteps
+              setTextOpacity(progress)
+              fadeInStep++
 
-              // Start form fade out after text animation completes (3 seconds)
-              setTimeout(() => {
-                let formFadeStep = 0
-                const formFadeSteps = 60
-                const formFadeTimer = setInterval(() => {
-                  const progress = formFadeStep / formFadeSteps
-                  setFormOpacity(1 - progress)
-                  formFadeStep++
+              if (fadeInStep >= fadeOutSteps) {
+                clearInterval(fadeInTimer)
+                setTextOpacity(1)
 
-                  if (formFadeStep >= formFadeSteps) {
-                    clearInterval(formFadeTimer)
-                    setFormOpacity(0)
-                  }
-                }, 50) // 3 seconds total (60 * 50ms)
-              }, 0)
-            }
-          }, fadeInDuration / fadeOutSteps)
-        }
-      }, fadeOutDuration / fadeOutSteps)
+                // Start form fade out after text animation completes (2 seconds)
+                setTimeout(() => {
+                  let formFadeStep = 0
+                  const formFadeSteps = 40
+                  const formFadeTimer = setInterval(() => {
+                    const progress = formFadeStep / formFadeSteps
+                    setFormOpacity(1 - progress)
+                    formFadeStep++
+
+                    if (formFadeStep >= formFadeSteps) {
+                      clearInterval(formFadeTimer)
+                      setFormOpacity(0)
+                    }
+                  }, 50) // 2 seconds total (40 * 50ms)
+                }, 0)
+              }
+            }, fadeInDuration / fadeOutSteps)
+          }
+        }, fadeOutDuration / fadeOutSteps)
+      }, 100) // 100ms delay for reset visibility
     }
-  }, [isSubmitted, newText])
+  }, [isSubmitted, newText, originalText])
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
