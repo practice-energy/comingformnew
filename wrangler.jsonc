@@ -2,6 +2,6 @@
 "name": "comingformnew",
 "compatibility_date": "2025-06-29",
 "assets": {
-"directory": "./dist"
+"directory": "app/page.tsx./dist"
 	    }
 	  }
