@@ -4,12 +4,15 @@ import type React from "react"
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
+import { useActionState } from "react"
+import { submitEmail } from "../actions/email-actions"
 
 export default function Component() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  // Replace the existing email state management with:
+  const [state, action, isPending] = useActionState(submitEmail, {})
   const [email, setEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [emailError, setEmailError] = useState("")
   const [displayText, setDisplayText] = useState("Новый опыт взаимодействия близко")
   const [textOpacity, setTextOpacity] = useState(1)
   const [formOpacity, setFormOpacity] = useState(1)
@@ -206,34 +209,24 @@ export default function Component() {
     }
   }, [isSubmitted, newText, originalText])
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return emailRegex.test(email)
-  }
+  useEffect(() => {
+    if (state?.success && !isSubmitted) {
+      setIsSubmitted(true)
+    }
+  }, [state?.success, isSubmitted])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setEmailError("")
 
-    if (!email) {
-      setEmailError("Введите email адрес")
-      return
-    }
+    if (!email || isPending) return
 
-    if (!validateEmail(email)) {
-      setEmailError("Введите корректный email адрес")
-      return
-    }
-
-    setIsSubmitted(true)
-    console.log("Email submitted:", email)
+    const formData = new FormData()
+    formData.append("email", email)
+    action(formData)
   }
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
-    if (emailError) {
-      setEmailError("")
-    }
   }
 
   // Mobile scroll positioning
@@ -297,7 +290,7 @@ export default function Component() {
               value={email}
               onChange={handleEmailChange}
               placeholder="Введите ваш email"
-              className={`w-full px-3 sm:px-4 py-2 sm:py-3 bg-white/20 border ${emailError ? "border-red-400" : "border-white/30"} rounded text-white placeholder-white/70 focus:outline-none focus:ring-2 ${emailError ? "focus:ring-red-400" : "focus:ring-white/50"} focus:border-transparent text-sm sm:text-base`}
+              className={`w-full px-3 sm:px-4 py-2 sm:py-3 bg-white/20 border ${state?.errors?.email ? "border-red-400" : "border-white/30"} rounded text-white placeholder-white/70 focus:outline-none focus:ring-2 ${state?.errors?.email ? "focus:ring-red-400" : "focus:ring-white/50"} focus:border-transparent text-sm sm:text-base`}
               required
             />
           </div>
@@ -305,26 +298,31 @@ export default function Component() {
           {/* Submit button with arrow icon - Bottom right corner with proper spacing */}
           <button
             onClick={handleSubmit}
-            className="absolute bottom-2.5 sm:bottom-3.5 right-2.5 sm:right-3.5 bg-violet-600 text-white p-2 sm:p-2.5 rounded font-medium hover:bg-violet-700 transition-colors duration-200 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10"
+            disabled={isPending}
+            className="absolute bottom-2.5 sm:bottom-3.5 right-2.5 sm:right-3.5 bg-violet-600 text-white p-2 sm:p-2.5 rounded font-medium hover:bg-violet-700 transition-colors duration-200 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 disabled:opacity-50"
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 19V5M5 12l7-7 7 7" />
-            </svg>
+            {isPending ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 19V5M5 12l7-7 7 7" />
+              </svg>
+            )}
           </button>
 
           {/* Error message */}
-          {emailError && (
+          {state?.errors?.email && (
             <div className="absolute top-[42px] sm:top-[51px] left-2.5 sm:left-3.5 text-red-400 text-xs sm:text-sm mt-1">
-              {emailError}
+              {state.errors.email[0]}
             </div>
           )}
 
