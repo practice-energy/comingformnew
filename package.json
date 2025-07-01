@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@cloudflare/workers-types": "^4.20250628.0",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "latest",
     "@radix-ui/react-alert-dialog": "latest",
@@ -42,6 +43,7 @@
     "clsx": "^2.1.1",
     "cmdk": "latest",
     "date-fns": "4.1.0",
+    "drizzle-orm": "^0.44.2",
     "embla-carousel-react": "latest",
     "input-otp": "latest",
     "lucide-react": "^0.454.0",
@@ -53,6 +55,7 @@
     "react-hook-form": "latest",
     "react-resizable-panels": "latest",
     "recharts": "latest",
+    "schema": "link:@/schema",
     "sonner": "latest",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
@@ -60,6 +63,7 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.12",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

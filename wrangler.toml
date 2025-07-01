@@ -1,0 +1,14 @@
+name = "comming-form"
+compatibility_date = "2023-05-18"
+account_id = "1b30299d59c92c5b1a684eb963a7637b"
+workers_dev = true
+
+[build]
+command = "pnpm run build && npx @cloudflare/next-on-pages"
+upload.format = "modules"
+upload.main = "./__next-on-pages/dist/_worker.js"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "d1-rest-coming"
+database_id = "<03475736-4281-469f-9472-a291c23a38c0>"

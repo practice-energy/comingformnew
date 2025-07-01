@@ -1,0 +1,12 @@
+deploy_to_cloudflare:
+  stage: deploy
+  image: node:latest
+  script:
+    - apt-get update && apt-get install -y curl
+    - npm install -g @cloudflare/wrangler
+    - pnpm install
+    - pnpm run build
+    - npx @cloudflare/next-on-pages
+    - wrangler deploy --compatibility-date=2023-05-18 ./__next-on-pages/dist
+  only:
+    - main
