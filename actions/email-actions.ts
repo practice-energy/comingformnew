@@ -60,8 +60,8 @@ async function insertEmailToDatabase(email: string) {
   // const result = await db.collection('emails').insertOne({ email, createdAt: new Date() })
 
   // For Supabase:
-  // const { data, error } = await supabase.from('emails').insert([{ email }])
-  // if (error) throw error
+  const { data, error } = await supabase.from('emails').insert([{ email }])
+  if (error) throw error
 
   // For Neon:
   // const sql = neon(process.env.DATABASE_URL);
