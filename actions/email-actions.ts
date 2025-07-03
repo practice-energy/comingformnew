@@ -1,50 +1,76 @@
 "use server"
 
-import { drizzle } from "drizzle-orm/d1"
-import { eq } from "drizzle-orm"
-import { subscribers } from "@/src/schema"
+import { z } from "zod"
 
-export async function submitEmail(prevState: any, formData: FormData) {
-  const email = formData.get("email") as string
+// Email validation schema
+const EmailSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address." }).trim(),
+})
 
-  // Валидация email
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { errors: { email: ["Введите корректный email"] } }
+export type FormState = {
+  errors?: {
+    email?: string[]
+  }
+  message?: string
+  success?: boolean
+}
+
+export async function submitEmail(prevState: FormState, formData: FormData): Promise<FormState> {
+  // Validate the email
+  const validatedFields = EmailSchema.safeParse({
+    email: formData.get("email"),
+  })
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      success: false,
+    }
   }
 
+  const { email } = validatedFields.data
+
   try {
-    // Проверка наличия DB в окружении
-    if (!process.env.DB) {
-      throw new Error("DB environment variable is not defined")
+    // Store email in database
+    await insertEmailToDatabase(email)
+
+    return {
+      message: "Вскоре вы получите приглашение: адрес принят",
+      success: true,
     }
-
-    // Инициализация Drizzle ORM с D1
-    const db = drizzle(process.env.DB as unknown as D1Database)
-
-    // Проверка существующего email
-    const existing = await db
-        .select()
-        .from(subscribers)
-        .where(eq(subscribers.email, email))
-        .execute()
-
-    if (existing.length > 0) {
-      return { errors: { email: ["Этот email уже зарегистрирован"] } }
-    }
-
-    // Вставка нового email
-    await db
-        .insert(subscribers)
-        .values({ email, createdAt: new Date() })
-        .execute()
-
-    return { success: true }
   } catch (error) {
     console.error("Database error:", error)
     return {
-      errors: {
-        general: ["Произошла ошибка. Пожалуйста, попробуйте снова."]
-      }
+      message: "Ошибка при отправке. Попробуйте снова.",
+      success: false,
     }
+  }
+}
+
+// Database function - replace with your actual database implementation
+async function insertEmailToDatabase(email: string) {
+  // Simulate database delay
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+
+  // Example database insertion logic:
+  // For SQL databases (PostgreSQL, MySQL, etc.):
+  // const result = await db.query('INSERT INTO emails (email, created_at) VALUES ($1, $2)', [email, new Date()])
+
+  // For MongoDB:
+  // const result = await db.collection('emails').insertOne({ email, createdAt: new Date() })
+
+  // For Supabase:
+  // const { data, error } = await supabase.from('emails').insert([{ email }])
+  // if (error) throw error
+
+  // For Neon:
+  // const sql = neon(process.env.DATABASE_URL);
+  // await sql`INSERT INTO emails (email, created_at) VALUES (${email}, ${new Date().toISOString()})`;
+
+  console.log(`Email ${email} would be inserted into database`)
+
+  // Simulate potential database error for testing
+  if (email === "error@test.com") {
+    throw new Error("Database error")
   }
 }

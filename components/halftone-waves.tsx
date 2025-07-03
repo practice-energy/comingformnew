@@ -10,7 +10,7 @@ import { submitEmail } from "../actions/email-actions"
 export default function Component() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   // Replace the existing email state management with:
-  const [state, action, isPending] = useActionState(submitEmail, null)
+  const [state, action, isPending] = useActionState(submitEmail, {})
   const [email, setEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [displayText, setDisplayText] = useState("Новый опыт взаимодействия близко")
