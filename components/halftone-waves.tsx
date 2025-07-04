@@ -16,6 +16,9 @@ export default function Component() {
   const [displayText, setDisplayText] = useState("Новый опыт взаимодействия близко")
   const [textOpacity, setTextOpacity] = useState(1)
   const [formOpacity, setFormOpacity] = useState(1)
+  const [stopAnimation, setStopAnimation] = useState(false)
+  const [logoGlow, setLogoGlow] = useState(false)
+  const [glowIntensity, setGlowIntensity] = useState(0)
 
   const originalText = "Новый опыт взаимодействия близко"
   const newText = "Вскоре вы получите приглашение: адрес принят"
@@ -74,7 +77,7 @@ export default function Component() {
       }
 
       for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
+        for (let x = 0; y < cols; x++) {
           const centerX = x * gridSize
           const centerY = y * gridSize
           const distanceFromCenter = Math.sqrt(
@@ -129,6 +132,11 @@ export default function Component() {
     }
 
     const animate = () => {
+      if (stopAnimation) {
+        cancelAnimationFrame(animationFrameId)
+        return
+      }
+
       ctx.fillStyle = "rgba(0, 0, 0, 0.1)"
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -206,6 +214,26 @@ export default function Component() {
           }
         }, fadeOutDuration / fadeOutSteps)
       }, 100) // 100ms delay for reset visibility
+
+      // После завершения анимации текста (2 секунды)
+      setTimeout(() => {
+        // Остановить анимацию кругов
+        setStopAnimation(true)
+
+        // Начать эффект свечения логотипа
+        setLogoGlow(true)
+
+        // Запустить пульсацию свечения
+        let glowTime = 0
+        const glowAnimation = setInterval(() => {
+          const intensity = (Math.sin(glowTime) * 0.5 + 0.5) * 0.8 // 0 to 0.8
+          setGlowIntensity(intensity)
+          glowTime += 0.03 // Та же частота что и анимация кругов
+        }, 16) // ~60fps
+
+        // Сохранить интервал для очистки
+        return () => clearInterval(glowAnimation)
+      }, 2000)
     }
   }, [isSubmitted, newText, originalText])
 
@@ -239,9 +267,16 @@ export default function Component() {
     <div className="relative w-full h-screen overflow-hidden">
       <canvas ref={canvasRef} className="w-full h-screen bg-black" />
 
-      {/* Logo - Centered with black color */}
+      {/* Logo - Centered with glow effect */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[251px] h-[225px] relative">
+        <div
+          className="w-[251px] h-[225px] relative transition-all duration-300"
+          style={{
+            filter: logoGlow
+              ? `drop-shadow(0 0 ${20 + glowIntensity * 30}px rgba(124, 58, 237, ${0.3 + glowIntensity * 0.7})) drop-shadow(0 0 ${40 + glowIntensity * 60}px rgba(124, 58, 237, ${0.2 + glowIntensity * 0.5}))`
+              : "none",
+          }}
+        >
           <Image src="/logo_coming.svg" alt="Coming Logo" width={251} height={225} className="w-full h-full" />
         </div>
       </div>
@@ -255,7 +290,7 @@ export default function Component() {
           <p
             className="font-semibold tracking-normal"
             style={{
-              color: "rgba(255, 255, 255, 0.95)",
+              color: "rgba(255, 255, 255, 0.665)",
               fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
               fontSize: "clamp(1.575rem, 4vw, 2.52rem)", // Увеличено на 5% от text-2xl/3xl/4xl
               textShadow:
