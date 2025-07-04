@@ -257,7 +257,7 @@ export default function Component() {
       </div>
 
       {/* Text - Positioned between header and logo top */}
-      <div className="absolute top-[20vh] sm:top-[25vh] left-1/2 transform -translate-x-1/2 pointer-events-none">
+      <div className="absolute top-[15vh] sm:top-[25vh] left-1/2 transform -translate-x-1/2 pointer-events-none">
         <div
           className="text-center pointer-events-none w-[90vw] sm:w-[720px] max-w-[720px]"
           style={{ opacity: textOpacity }}
