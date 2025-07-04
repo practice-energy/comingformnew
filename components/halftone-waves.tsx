@@ -279,7 +279,7 @@ export default function Component() {
       </div>
 
       {/* Text - Positioned between header and logo top */}
-      <div className="absolute top-[25vh] left-1/2 transform -translate-x-1/2 pointer-events-none">
+      <div className="absolute top-[20vh] sm:top-[25vh] left-1/2 transform -translate-x-1/2 pointer-events-none">
         <div
           className="text-center pointer-events-none w-[90vw] sm:w-[720px] max-w-[720px]"
           style={{ opacity: textOpacity }}
@@ -287,11 +287,11 @@ export default function Component() {
           <p
             className="font-semibold tracking-normal"
             style={{
-              color: "rgba(255, 255, 255, 0.95)",
+              color: "rgba(255, 255, 255, 1)", // Increased from 0.95 to 1 (full brightness)
               fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
-              fontSize: "clamp(1.575rem, 4vw, 2.52rem)", // Увеличено на 5% от text-2xl/3xl/4xl
+              fontSize: "clamp(1.575rem, 4vw, 2.52rem)",
               textShadow:
-                "0 0 10px rgba(255, 255, 255, 0.56), 0 0 20px rgba(255, 255, 255, 0.42), 0 0 30px rgba(255, 255, 255, 0.28), 1px 1px 0 rgba(0, 0, 0, 0.8), -1px -1px 0 rgba(0, 0, 0, 0.8), 1px -1px 0 rgba(0, 0, 0, 0.8), -1px 1px 0 rgba(0, 0, 0, 0.8)",
+                "0 0 10px rgba(255, 255, 255, 0.73), 0 0 20px rgba(255, 255, 255, 0.55), 0 0 30px rgba(255, 255, 255, 0.36), 1px 1px 0 rgba(0, 0, 0, 0.8), -1px -1px 0 rgba(0, 0, 0, 0.8), 1px -1px 0 rgba(0, 0, 0, 0.8), -1px 1px 0 rgba(0, 0, 0, 0.8)", // Increased glow values by 30%
             }}
           >
             {displayText}
