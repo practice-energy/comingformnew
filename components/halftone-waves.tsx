@@ -17,7 +17,6 @@ export default function Component() {
   const [textOpacity, setTextOpacity] = useState(1)
   const [formOpacity, setFormOpacity] = useState(1)
   const [animationStopped, setAnimationStopped] = useState(false)
-  const [logoGlow, setLogoGlow] = useState(0)
 
   const originalText = "Новый опыт взаимодействия близко"
   const newText = "Вскоре вы получите приглашение: адрес принят"
@@ -153,7 +152,7 @@ export default function Component() {
       cancelAnimationFrame(animationFrameId)
       window.removeEventListener("resize", resizeCanvas)
     }
-  }, [])
+  }, [animationStopped])
 
   useEffect(() => {
     if (isSubmitted) {
@@ -207,23 +206,9 @@ export default function Component() {
                     }
                   }, 50)
 
-                  // Stop animation and start logo glow after 3 seconds
+                  // Stop animation after 3 seconds
                   setTimeout(() => {
                     setAnimationStopped(true)
-
-                    // Start logo pulsating glow
-                    const startLogoGlow = () => {
-                      let glowTime = 0
-                      const glowInterval = setInterval(() => {
-                        const glowIntensity = Math.sin(glowTime) * 0.5 + 0.5 // Same frequency as circle animation
-                        setLogoGlow(glowIntensity)
-                        glowTime += 0.03 // Same increment as circle animation
-                      }, 16) // ~60fps
-
-                      return glowInterval
-                    }
-
-                    startLogoGlow()
                   }, 3000)
                 }, 0)
               }
@@ -264,16 +249,9 @@ export default function Component() {
     <div className="relative w-full h-screen overflow-hidden">
       <canvas ref={canvasRef} className="w-full h-screen bg-black" />
 
-      {/* Logo - Centered with black color */}
+      {/* Logo - Centered */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div
-          className="w-[251px] h-[225px] relative transition-all duration-300"
-          style={{
-            filter: animationStopped
-              ? `drop-shadow(0 0 ${20 + logoGlow * 30}px rgba(255, 255, 255, ${0.6 + logoGlow * 0.4})) drop-shadow(0 0 ${40 + logoGlow * 60}px rgba(255, 255, 255, ${0.3 + logoGlow * 0.3}))`
-              : "none",
-          }}
-        >
+        <div className="w-[251px] h-[225px] relative">
           <Image src="/logo_coming.svg" alt="Coming Logo" width={251} height={225} className="w-full h-full" />
         </div>
       </div>
