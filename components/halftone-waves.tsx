@@ -215,16 +215,6 @@ export default function Component() {
     }
   }, [state?.success, isSubmitted])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!email || isPending) return
-
-    const formData = new FormData()
-    formData.append("email", email)
-    action(formData)
-  }
-
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
   }
@@ -257,7 +247,7 @@ export default function Component() {
       </div>
 
       {/* Text - Positioned between header and logo top */}
-      <div className="absolute top-[25vh] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+      <div className="absolute top-[25vh] left-1/2 transform -translate-x-1/2 pointer-events-none">
         <div
           className="text-center pointer-events-none w-[90vw] sm:w-[720px] max-w-[720px]"
           style={{ opacity: textOpacity }}
@@ -282,23 +272,28 @@ export default function Component() {
         className="absolute bottom-5 sm:bottom-7 left-1/2 transform -translate-x-1/2 pointer-events-auto"
         style={{ opacity: formOpacity }}
       >
-        <div className="w-[90vw] sm:w-[720px] max-w-[720px] h-[102px] sm:h-[130px] bg-white/10 border border-white/20 rounded backdrop-blur-sm p-2.5 sm:p-3.5 relative">
+        <form
+          action={action}
+          className="w-[90vw] sm:w-[720px] max-w-[720px] h-[102px] sm:h-[130px] bg-white/10 border border-white/20 rounded backdrop-blur-sm p-2.5 sm:p-3.5 relative"
+        >
           {/* Email input */}
           <div className="absolute top-2.5 sm:top-3.5 left-2.5 sm:left-3.5 right-2.5 sm:right-3.5">
             <input
               type="email"
+              name="email"
               value={email}
               onChange={handleEmailChange}
               placeholder="Введите ваш email"
               className={`w-full px-3 sm:px-4 py-2 sm:py-3 bg-white/20 border ${state?.errors?.email ? "border-red-400" : "border-white/30"} rounded text-white placeholder-white/70 focus:outline-none focus:ring-2 ${state?.errors?.email ? "focus:ring-red-400" : "focus:ring-white/50"} focus:border-transparent text-sm sm:text-base`}
               required
+              disabled={isPending}
             />
           </div>
 
           {/* Submit button with arrow icon - Bottom right corner with proper spacing */}
           <button
-            onClick={handleSubmit}
-            disabled={isPending}
+            type="submit"
+            disabled={isPending || !email}
             className="absolute bottom-2.5 sm:bottom-3.5 right-2.5 sm:right-3.5 bg-violet-600 text-white p-2 sm:p-2.5 rounded font-medium hover:bg-violet-700 transition-colors duration-200 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 disabled:opacity-50"
           >
             {isPending ? (
@@ -340,7 +335,7 @@ export default function Component() {
               Практис
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )

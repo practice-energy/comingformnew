@@ -47,30 +47,42 @@ export async function submitEmail(prevState: FormState, formData: FormData): Pro
   }
 }
 
-// Database function - replace with your actual database implementation
+// Database function using Neon
 async function insertEmailToDatabase(email: string) {
-  // Simulate database delay
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+  const { neon } = await import("@neondatabase/serverless")
+  const sql = neon(process.env.DATABASE_URL!)
 
-  // Example database insertion logic:
-  // For SQL databases (PostgreSQL, MySQL, etc.):
-  // const result = await db.query('INSERT INTO emails (email, created_at) VALUES ($1, $2)', [email, new Date()])
+  try {
+    // Insert into the existing users_sync table
+    const result = await sql`
+      INSERT INTO neon_auth.users_sync (
+        id, 
+        email, 
+        name, 
+        created_at, 
+        updated_at,
+        raw_json
+      ) VALUES (
+        gen_random_uuid()::text,
+        ${email},
+        NULL,
+        NOW(),
+        NOW(),
+        jsonb_build_object('source', 'coming_soon_signup', 'ip_address', NULL)
+      )
+      ON CONFLICT (email) DO UPDATE SET
+        updated_at = NOW(),
+        raw_json = jsonb_set(
+          COALESCE(users_sync.raw_json, '{}'::jsonb),
+          '{last_signup_attempt}',
+          to_jsonb(NOW())
+        )
+      RETURNING id, email, created_at
+    `
 
-  // For MongoDB:
-  // const result = await db.collection('emails').insertOne({ email, createdAt: new Date() })
-
-  // For Supabase:
-  const { data, error } = await supabase.from('emails').insert([{ email }])
-  if (error) throw error
-
-  // For Neon:
-  // const sql = neon(process.env.DATABASE_URL);
-  // await sql`INSERT INTO emails (email, created_at) VALUES (${email}, ${new Date().toISOString()})`;
-
-  console.log(`Email ${email} would be inserted into database`)
-
-  // Simulate potential database error for testing
-  if (email === "error@test.com") {
-    throw new Error("Database error")
+    return result[0]
+  } catch (error) {
+    console.error("Database insertion error:", error)
+    throw new Error("Failed to save email to database")
   }
 }
