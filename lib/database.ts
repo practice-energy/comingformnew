@@ -1,20 +1,24 @@
+// Database configuration examples
+// Uncomment and configure the database you want to use
+
+// For Supabase
 import { createClient } from "@supabase/supabase-js"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+)
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
+// Example function for Supabase
 export async function insertEmailSupabase(email: string) {
-  const { data, error } = await supabase.from("emails").insert([{ email }]).select().single()
+  const { data, error } = await supabase.from("emails").insert([
+    {
+      email,
+      source: "coming_soon_signup",
+      created_at: new Date().toISOString(),
+    },
+  ])
 
-  if (error) {
-    if (error.code === "23505") {
-      // unique constraint violation
-      throw new Error("Email already exists")
-    }
-    throw error
-  }
-
+  if (error) throw error
   return data
 }

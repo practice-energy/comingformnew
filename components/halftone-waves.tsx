@@ -152,7 +152,7 @@ export default function Component() {
       cancelAnimationFrame(animationFrameId)
       window.removeEventListener("resize", resizeCanvas)
     }
-  }, [animationStopped])
+  }, [])
 
   useEffect(() => {
     if (isSubmitted) {
