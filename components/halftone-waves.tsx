@@ -16,9 +16,8 @@ export default function Component() {
   const [displayText, setDisplayText] = useState("Новый опыт взаимодействия близко")
   const [textOpacity, setTextOpacity] = useState(1)
   const [formOpacity, setFormOpacity] = useState(1)
-  const [stopAnimation, setStopAnimation] = useState(false)
-  const [logoGlow, setLogoGlow] = useState(false)
-  const [glowIntensity, setGlowIntensity] = useState(0)
+  const [animationStopped, setAnimationStopped] = useState(false)
+  const [logoGlow, setLogoGlow] = useState(0)
 
   const originalText = "Новый опыт взаимодействия близко"
   const newText = "Вскоре вы получите приглашение: адрес принят"
@@ -77,7 +76,7 @@ export default function Component() {
       }
 
       for (let y = 0; y < rows; y++) {
-        for (let x = 0; y < cols; x++) {
+        for (let x = 0; x < cols; x++) {
           const centerX = x * gridSize
           const centerY = y * gridSize
           const distanceFromCenter = Math.sqrt(
@@ -132,11 +131,10 @@ export default function Component() {
     }
 
     const animate = () => {
-      if (stopAnimation) {
+      if (animationStopped) {
         cancelAnimationFrame(animationFrameId)
         return
       }
-
       ctx.fillStyle = "rgba(0, 0, 0, 0.1)"
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -197,7 +195,7 @@ export default function Component() {
                 // Start form fade out after text animation completes (2 seconds)
                 setTimeout(() => {
                   let formFadeStep = 0
-                  const formFadeSteps = 40
+                  const formFadeSteps = 60
                   const formFadeTimer = setInterval(() => {
                     const progress = formFadeStep / formFadeSteps
                     setFormOpacity(1 - progress)
@@ -207,33 +205,32 @@ export default function Component() {
                       clearInterval(formFadeTimer)
                       setFormOpacity(0)
                     }
-                  }, 50) // 2 seconds total (40 * 50ms)
+                  }, 50)
+
+                  // Stop animation and start logo glow after 3 seconds
+                  setTimeout(() => {
+                    setAnimationStopped(true)
+
+                    // Start logo pulsating glow
+                    const startLogoGlow = () => {
+                      let glowTime = 0
+                      const glowInterval = setInterval(() => {
+                        const glowIntensity = Math.sin(glowTime) * 0.5 + 0.5 // Same frequency as circle animation
+                        setLogoGlow(glowIntensity)
+                        glowTime += 0.03 // Same increment as circle animation
+                      }, 16) // ~60fps
+
+                      return glowInterval
+                    }
+
+                    startLogoGlow()
+                  }, 3000)
                 }, 0)
               }
             }, fadeInDuration / fadeOutSteps)
           }
         }, fadeOutDuration / fadeOutSteps)
       }, 100) // 100ms delay for reset visibility
-
-      // После завершения анимации текста (2 секунды)
-      setTimeout(() => {
-        // Остановить анимацию кругов
-        setStopAnimation(true)
-
-        // Начать эффект свечения логотипа
-        setLogoGlow(true)
-
-        // Запустить пульсацию свечения
-        let glowTime = 0
-        const glowAnimation = setInterval(() => {
-          const intensity = (Math.sin(glowTime) * 0.5 + 0.5) * 0.8 // 0 to 0.8
-          setGlowIntensity(intensity)
-          glowTime += 0.03 // Та же частота что и анимация кругов
-        }, 16) // ~60fps
-
-        // Сохранить интервал для очистки
-        return () => clearInterval(glowAnimation)
-      }, 2000)
     }
   }, [isSubmitted, newText, originalText])
 
@@ -267,13 +264,13 @@ export default function Component() {
     <div className="relative w-full h-screen overflow-hidden">
       <canvas ref={canvasRef} className="w-full h-screen bg-black" />
 
-      {/* Logo - Centered with glow effect */}
+      {/* Logo - Centered with black color */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div
           className="w-[251px] h-[225px] relative transition-all duration-300"
           style={{
-            filter: logoGlow
-              ? `drop-shadow(0 0 ${20 + glowIntensity * 30}px rgba(124, 58, 237, ${0.3 + glowIntensity * 0.7})) drop-shadow(0 0 ${40 + glowIntensity * 60}px rgba(124, 58, 237, ${0.2 + glowIntensity * 0.5}))`
+            filter: animationStopped
+              ? `drop-shadow(0 0 ${20 + logoGlow * 30}px rgba(255, 255, 255, ${0.6 + logoGlow * 0.4})) drop-shadow(0 0 ${40 + logoGlow * 60}px rgba(255, 255, 255, ${0.3 + logoGlow * 0.3}))`
               : "none",
           }}
         >
@@ -290,11 +287,11 @@ export default function Component() {
           <p
             className="font-semibold tracking-normal"
             style={{
-              color: "rgba(255, 255, 255, 0.665)",
+              color: "rgba(255, 255, 255, 0.95)",
               fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif",
               fontSize: "clamp(1.575rem, 4vw, 2.52rem)", // Увеличено на 5% от text-2xl/3xl/4xl
               textShadow:
-                "1px 1px 0 rgba(0, 0, 0, 0.8), -1px -1px 0 rgba(0, 0, 0, 0.8), 1px -1px 0 rgba(0, 0, 0, 0.8), -1px 1px 0 rgba(0, 0, 0, 0.8)", // Обводка
+                "0 0 10px rgba(255, 255, 255, 0.56), 0 0 20px rgba(255, 255, 255, 0.42), 0 0 30px rgba(255, 255, 255, 0.28), 1px 1px 0 rgba(0, 0, 0, 0.8), -1px -1px 0 rgba(0, 0, 0, 0.8), 1px -1px 0 rgba(0, 0, 0, 0.8), -1px 1px 0 rgba(0, 0, 0, 0.8)",
             }}
           >
             {displayText}
