@@ -1,6 +1,7 @@
 "use server"
 
 import { z } from "zod"
+import { insertEmailSupabase } from "../lib/database"
 
 // Email validation schema
 const EmailSchema = z.object({
@@ -31,7 +32,7 @@ export async function submitEmail(prevState: FormState, formData: FormData): Pro
   const { email } = validatedFields.data
 
   try {
-    // Store email in database
+    // Store email in database using Supabase
     await insertEmailToDatabase(email)
 
     return {
@@ -47,40 +48,11 @@ export async function submitEmail(prevState: FormState, formData: FormData): Pro
   }
 }
 
-// Database function using Neon
+// Database function using Supabase
 async function insertEmailToDatabase(email: string) {
-  const { neon } = await import("@neondatabase/serverless")
-  const sql = neon(process.env.DATABASE_URL!)
-
   try {
-    // Insert into the existing users_sync table
-    const result = await sql`
-      INSERT INTO neon_auth.users_sync (
-        id, 
-        email, 
-        name, 
-        created_at, 
-        updated_at,
-        raw_json
-      ) VALUES (
-        gen_random_uuid()::text,
-        ${email},
-        NULL,
-        NOW(),
-        NOW(),
-        jsonb_build_object('source', 'coming_soon_signup', 'ip_address', NULL)
-      )
-      ON CONFLICT (email) DO UPDATE SET
-        updated_at = NOW(),
-        raw_json = jsonb_set(
-          COALESCE(users_sync.raw_json, '{}'::jsonb),
-          '{last_signup_attempt}',
-          to_jsonb(NOW())
-        )
-      RETURNING id, email, created_at
-    `
-
-    return result[0]
+    const result = await insertEmailSupabase(email)
+    return result
   } catch (error) {
     console.error("Database insertion error:", error)
     throw new Error("Failed to save email to database")
